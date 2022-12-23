@@ -6,7 +6,7 @@
 /*   By: nlesage <nlesage@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 14:29:08 by nlesage           #+#    #+#             */
-/*   Updated: 2022/12/22 15:03:06 by nlesage          ###   ########.fr       */
+/*   Updated: 2022/12/23 14:44:33 by nlesage          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ int	main(int argc, char **argv)
 		ft_putstr_fd("Error with the PID entered\n", 2);
 		return (1);
 	}
-	ft_printf("pid entered=%d\n", pid);
 	ft_send_message(argv[2], pid);
 	return (0);
 }
@@ -54,21 +53,31 @@ int	ft_send_message(char *str, int pid)
 	return (0);
 }
 
+void	ft_handle_signal(int n)
+{
+	(void) n;
+}
+
 int	ft_send_char(char c, int pid)
 {
-	int	i;
-	unsigned char	tmp;
+	int					i;
+	unsigned char		tmp;
+	struct sigaction	sa;
 
 	i = 1;
+	sa.sa_handler = ft_handle_signal;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+	if (sigaction(SIGUSR1, &sa, NULL) == -1)
+		exit(1);
 	while (i <= 8)
 	{
-		tmp = (c << (8 - i) & 128) >> (7); 
+		tmp = (c << (8 - i) & 128) >> (7);
 		if (tmp == 1)
 			kill(pid, SIGUSR1);
 		else
 			kill(pid, SIGUSR2);
-		//ft_printf("ft_send_char: tmp=%d\n", tmp);
-		usleep(500);
+		sleep(1);
 		i++;
 	}
 	return (0);

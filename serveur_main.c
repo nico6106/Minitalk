@@ -6,7 +6,7 @@
 /*   By: nlesage <nlesage@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 12:26:44 by nlesage           #+#    #+#             */
-/*   Updated: 2022/12/22 15:22:38 by nlesage          ###   ########.fr       */
+/*   Updated: 2022/12/23 14:42:57 by nlesage          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,16 @@
 
 int	main(int argc, char **argv)
 {
-	pid_t	pid;
+	pid_t				pid;
+	struct sigaction	sa;
 
-	void 	ft_handle_signal(int sig);
-	struct sigaction sa;
-
-	sa.sa_handler = ft_handle_signal;
-    sa.sa_flags = 0;
-    sigemptyset(&sa.sa_mask);
-
-	if (sigaction(SIGUSR1, &sa, NULL) == -1 || sigaction(SIGUSR2, &sa, NULL) == -1) 
-	{
-        ft_printf("Error\n");
-    }
+	sa.sa_flags = SA_SIGINFO;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_sigaction = ft_handle;
+	sigaddset(&sa.sa_mask, SIGUSR1);
+	if (sigaction(SIGUSR1, &sa, NULL) == -1
+		|| sigaction(SIGUSR2, &sa, NULL) == -1)
+		ft_printf("Error\n");
 	(void) argv;
 	if (argc != 1)
 	{
@@ -34,77 +31,52 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	pid = getpid();
-	ft_printf("pid='%d'\n", pid);
-	//signal(SIGUSR1, ft_handle_signal);
-	//signal(SIGUSR2, ft_handle_signal);
+	ft_printf("PID=%d\n", pid);
 	while (argc == 1)
-	{
-		pause();
-	}
+		sleep(1);
 }
 
-void	ft_handle_signal(int n)
+void	ft_handle(int n, siginfo_t *info, void *context)
 {
 	static int		i = 0;
 	static int		position = 0;
-	static int		nb = 1;
 	static int		bit = 0;
-	static char		*str = NULL;
+	static char		str[100000];
+	int				j;
 
-	if (!str)
-	{
-		str = malloc((50 + 1) * sizeof(char));
-		if (!str)
-			exit (0);
-		str[50] = '\0';
-	}
+	(void) context;
 	if (n == SIGUSR1)
 		i = i | (0x01 << bit);
 	bit++;
 	if (bit == 8 && i == 0)
 	{
-		/*exit, et affichage*/
-		ft_printf("%s\n", str);
-		free(str);
-		str = NULL;
+		ft_putstr_fd(str, 1);
+		j = -1;
+		while (++j <= position)
+			str[j] = 0;
+		ft_putchar_fd('\n', 1);
 		position = 0;
 		bit = 0;
 		i = 0;
 	}
 	else if (bit == 8)
 	{
-		str[position] = i;
-		position++;
+		str[position++] = i;
 		bit = 0;
 		i = 0;
 	}
-	if (position == 50 * nb)
-	{
-		nb++;
-		str = ft_upsize_str(str);
-	}
+	kill(info->si_pid, SIGUSR1);
 }
 
-char	*ft_upsize_str(char *init)
+void	ft_clean_str(char *str, int position)
 {
-	int		len;
-	int		i;
-	char	*str;
+	int	i;
 
 	i = 0;
-	len = ft_strlen(init);
-	str = malloc((len + 50 + 1) * sizeof(char));
-	str[len + 50] = '\0';
-	if (!str)
+	while (i < position)
 	{
-		free(init);
-		exit (0);
-	}
-	while (init[i])
-	{
-		str[i] = init[i];
+		str[i] = 0;
 		i++;
 	}
-	free(init);
-	return (str);
+	str[i] = 0;
 }

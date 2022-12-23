@@ -6,7 +6,7 @@
 /*   By: nlesage <nlesage@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 09:19:10 by nlesage           #+#    #+#             */
-/*   Updated: 2022/12/21 15:28:09 by nlesage          ###   ########.fr       */
+/*   Updated: 2022/12/23 14:21:36 by nlesage          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int		ft_tolower(int c);
 int		ft_toupper(int c);
 int		ft_lstsize(t_list *lst);
 int		ft_abs(int nb);
+int		ft_str_is_number(char *str);
 
 char	*ft_strchr(const char *s, int c);
 char	*ft_strdup(const char *s);

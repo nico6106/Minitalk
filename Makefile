@@ -6,14 +6,13 @@
 #    By: nlesage <nlesage@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/10 09:55:41 by nlesage           #+#    #+#              #
-#    Updated: 2022/12/21 15:30:31 by nlesage          ###   ########.fr        #
+#    Updated: 2022/12/23 14:28:08 by nlesage          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SRCS_SERV	= serveur_main.c 
 
-SRCS_CLIENT	= client_main.c \
-				add_libft.c
+SRCS_CLIENT	= client_main.c
 
 SRCS_BONUS	= ${SRCS_SERV}
 
@@ -21,7 +20,7 @@ NAME_SE		= serveur
 
 NAME_CL		= client
 
-NAME_B		= checker
+NAME_B		= bo
 
 LIBFT_DIR	= Libft/
 
@@ -53,7 +52,7 @@ ${NAME_CL}:	${OBJS_CLIENT}
 ${NAME_B}:	${OBJS_BONUS}
 			${CC} ${FLAGS} -I${HEADERS} -o ${NAME_B} ${OBJS_BONUS} ${LIBFT_DIR}${LIBFT}
 
-all:		${NAME_SE} 
+all:		${NAME_SE}
 
 bonus:		${NAME_B}
 
