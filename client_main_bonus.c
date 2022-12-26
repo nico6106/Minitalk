@@ -1,32 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client_main.c                                      :+:      :+:    :+:   */
+/*   client_main_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nlesage <nlesage@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 14:29:08 by nlesage           #+#    #+#             */
-/*   Updated: 2022/12/26 10:33:52 by nlesage          ###   ########.fr       */
+/*   Updated: 2022/12/26 17:10:48 by nlesage          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "client.h"
+#include "client_bonus.h"
 
 int	main(int argc, char **argv)
 {
-	int	pid;
+	int					pid;
+	struct sigaction	sa;
 
+	sa.sa_flags = SA_SIGINFO;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_sigaction = ft_handle_signal;
+	sigaddset(&sa.sa_mask, SIGUSR1);
+	if (sigaction(SIGUSR1, &sa, NULL) == -1
+		|| sigaction(SIGUSR2, &sa, NULL) == -1)
+		ft_quit_message("Error with signal\n");
 	pid = 0;
 	if (argc != 3)
-	{
-		ft_putstr_fd("Error with the arguments entered\n", 2);
-		return (0);
-	}
+		ft_quit_message("Error with the arguments entered\n");
 	if (ft_extract_pid(argv[1], &pid) == 0)
-	{
-		ft_putstr_fd("Error with the PID entered\n", 2);
-		return (1);
-	}
+		ft_quit_message("Error with the PID entered\n");
 	ft_send_message(argv[2], pid);
 	return (0);
 }
@@ -53,36 +55,31 @@ int	ft_send_message(char *str, int pid)
 	return (0);
 }
 
-void	ft_handle_signal(int n)
+void	ft_handle_signal(int n, siginfo_t *info, void *context)
 {
-	(void) n;
+	(void) info;
+	(void) context;
+	if (n == SIGUSR2)
+		ft_putstr_fd("Message received by the server\n", 1);
 }
 
 int	ft_send_char(char c, int pid)
 {
 	int					i;
-	unsigned char		tmp;
-	struct sigaction	sa;
 	int					retour;
 
 	i = 1;
 	retour = 0;
-	sa.sa_handler = ft_handle_signal;
-	sa.sa_flags = 0;
-	sigemptyset(&sa.sa_mask);
-	if (sigaction(SIGUSR1, &sa, NULL) == -1)
-		exit(1);
 	while (i <= 8)
 	{
-		tmp = (c << (8 - i) & 128) >> (7);
-		if (tmp == 1)
+		if ((c << (8 - i) & 128) >> (7) == 1)
 			retour = kill(pid, SIGUSR1);
 		else
 			retour = kill(pid, SIGUSR2);
 		if (retour == -1)
 			ft_quit_wrong_pid();
-		sleep(1);
 		i++;
+		sleep(1);
 	}
 	return (0);
 }

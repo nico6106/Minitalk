@@ -1,34 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   serveur.h                                          :+:      :+:    :+:   */
+/*   client_other_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nlesage <nlesage@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/12/21 12:28:04 by nlesage           #+#    #+#             */
-/*   Updated: 2022/12/26 15:43:35 by nlesage          ###   ########.fr       */
+/*   Created: 2022/12/26 10:27:41 by nlesage           #+#    #+#             */
+/*   Updated: 2022/12/26 16:29:35 by nlesage          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVEUR_H
-# define SERVEUR_H
+#include "client.h"
 
-# include <sys/types.h>
-# include <unistd.h>
-# include <signal.h>
-# include "ft_printf.h"
-
-typedef struct s_var
+void	ft_quit_wrong_pid(void)
 {
-	int	i;
-	int	position;
-	int	bit;
-}	t_var;
+	ft_putstr_fd("Wrong PID\n", 2);
+	exit (0);
+}
 
-//serveur_main.c
-char	*ft_upsize_str(char *init);
-void	ft_handle(int n, siginfo_t *info, void *context);
-void	ft_call_kill(int pid, int user);
-void	ft_print_message(char *s);
-
-#endif
+void	ft_quit_message(char *str)
+{
+	ft_putstr_fd(str, 2);
+	exit (0);
+}

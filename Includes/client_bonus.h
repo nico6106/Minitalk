@@ -1,34 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   serveur.h                                          :+:      :+:    :+:   */
+/*   client_bonus.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nlesage <nlesage@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/12/21 12:28:04 by nlesage           #+#    #+#             */
-/*   Updated: 2022/12/26 15:43:35 by nlesage          ###   ########.fr       */
+/*   Created: 2022/12/21 12:26:55 by nlesage           #+#    #+#             */
+/*   Updated: 2022/12/26 16:48:19 by nlesage          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVEUR_H
-# define SERVEUR_H
+#ifndef CLIENT_BONUS_H
+# define CLIENT_BONUS_H
 
-# include <sys/types.h>
-# include <unistd.h>
-# include <signal.h>
 # include "ft_printf.h"
+# include <sys/types.h>
+# include <signal.h>
 
-typedef struct s_var
-{
-	int	i;
-	int	position;
-	int	bit;
-}	t_var;
+//client_main.c
+int		ft_extract_pid(char *str, int *pid);
+int		ft_send_message(char *str, int pid);
+int		ft_send_char(char c, int pid);
+void	ft_handle_signal(int n, siginfo_t *info, void *context);
 
-//serveur_main.c
-char	*ft_upsize_str(char *init);
-void	ft_handle(int n, siginfo_t *info, void *context);
-void	ft_call_kill(int pid, int user);
-void	ft_print_message(char *s);
+//client_other_bonus.c
+void	ft_quit_wrong_pid(void);
+void	ft_quit_message(char *str);
 
 #endif

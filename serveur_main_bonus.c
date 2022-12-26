@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   serveur_main.c                                     :+:      :+:    :+:   */
+/*   serveur_main_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nlesage <nlesage@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 12:26:44 by nlesage           #+#    #+#             */
-/*   Updated: 2022/12/26 16:26:43 by nlesage          ###   ########.fr       */
+/*   Updated: 2022/12/26 16:57:46 by nlesage          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "serveur.h"
+#include "serveur_bonus.h"
 
 int	main(int argc, char **argv)
 {
@@ -23,7 +23,10 @@ int	main(int argc, char **argv)
 	sigaddset(&sa.sa_mask, SIGUSR1);
 	if (sigaction(SIGUSR1, &sa, NULL) == -1
 		|| sigaction(SIGUSR2, &sa, NULL) == -1)
+	{
 		ft_putstr_fd("Error with signal\n", 2);
+		exit (0);
+	}
 	(void) argv;
 	if (argc != 1)
 	{
@@ -36,17 +39,17 @@ int	main(int argc, char **argv)
 		sleep(1);
 }
 
-void	ft_print_message(char *str)
+void	ft_print_message(char *str, int pid)
 {
 	ft_putstr_fd(str, 1);
 	ft_putchar_fd('\n', 1);
+	kill(pid, SIGUSR2);
 }
 
 void	ft_handle(int n, siginfo_t *info, void *context)
 {
 	static t_var	var;
 	static char		str[1000000];
-	int				j;
 
 	(void) context;
 	if (n == SIGUSR1)
@@ -54,10 +57,8 @@ void	ft_handle(int n, siginfo_t *info, void *context)
 	var.bit++;
 	if ((var.bit == 8 && var.i == 0) || var.position == (1000000 - 1))
 	{
-		ft_print_message(str);
-		j = -1;
-		while (++j <= var.position)
-			str[j] = 0;
+		ft_print_message(str, info->si_pid);
+		str[0] = 0;
 		var.position = 0;
 		var.bit = 0;
 		var.i = 0;
@@ -65,6 +66,7 @@ void	ft_handle(int n, siginfo_t *info, void *context)
 	else if (var.bit == 8)
 	{
 		str[var.position++] = var.i;
+		str[var.position] = 0;
 		var.bit = 0;
 		var.i = 0;
 	}
