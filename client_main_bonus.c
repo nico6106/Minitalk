@@ -6,11 +6,13 @@
 /*   By: nlesage <nlesage@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 14:29:08 by nlesage           #+#    #+#             */
-/*   Updated: 2022/12/26 17:10:48 by nlesage          ###   ########.fr       */
+/*   Updated: 2022/12/27 12:13:00 by nlesage          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "client_bonus.h"
+#include "Includes/client_bonus.h"
+
+int	g_status;
 
 int	main(int argc, char **argv)
 {
@@ -29,6 +31,7 @@ int	main(int argc, char **argv)
 		ft_quit_message("Error with the arguments entered\n");
 	if (ft_extract_pid(argv[1], &pid) == 0)
 		ft_quit_message("Error with the PID entered\n");
+	g_status = 0;
 	ft_send_message(argv[2], pid);
 	return (0);
 }
@@ -59,6 +62,7 @@ void	ft_handle_signal(int n, siginfo_t *info, void *context)
 {
 	(void) info;
 	(void) context;
+	g_status = 1;
 	if (n == SIGUSR2)
 		ft_putstr_fd("Message received by the server\n", 1);
 }
@@ -79,7 +83,9 @@ int	ft_send_char(char c, int pid)
 		if (retour == -1)
 			ft_quit_wrong_pid();
 		i++;
-		sleep(1);
+		while (g_status == 0)
+			;
+		g_status = 0;
 	}
 	return (0);
 }

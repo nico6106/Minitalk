@@ -6,7 +6,7 @@
 #    By: nlesage <nlesage@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/10 09:55:41 by nlesage           #+#    #+#              #
-#    Updated: 2022/12/26 16:29:00 by nlesage          ###   ########.fr        #
+#    Updated: 2022/12/27 11:57:09 by nlesage          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,9 +22,9 @@ NAME_SE		= serveur
 
 NAME_CL		= client
 
-NAME_CL_B	= client_bonus
+NAME_C_B	= client
 
-NAME_S_B	= serveur_bonus
+NAME_S_B	= serveur
 
 LIBFT_DIR	= Libft/
 
@@ -47,21 +47,17 @@ CC			= cc
 .c.o:
 			${CC} ${FLAGS} -I${HEADERS} -c $< -o ${<:.c=.o}
 
+all:		${NAME_SE}
+
 ${NAME_SE}:	${OBJS_SERV} ${OBJS_CLIENT}
 			make -C ${LIBFT_DIR}
 			${CC} ${FLAGS} -I${HEADERS} -o ${NAME_SE} ${OBJS_SERV} ${LIBFT_DIR}${LIBFT}
 			${CC} ${FLAGS} -I${HEADERS} -o ${NAME_CL} ${OBJS_CLIENT} ${LIBFT_DIR}${LIBFT}
 
-${NAME_S_B}: ${OBJS_SER_B} ${OBJS_CLI_B}
+bonus:		${OBJS_SER_B} ${OBJS_CLI_B}
 			make -C ${LIBFT_DIR}
 			${CC} ${FLAGS} -I${HEADERS} -o ${NAME_S_B} ${OBJS_SER_B} ${LIBFT_DIR}${LIBFT}
-			${CC} ${FLAGS} -I${HEADERS} -o ${NAME_CL_B} ${OBJS_CLI_B} ${LIBFT_DIR}${LIBFT}
-
-all:		${NAME_SE}
-
-bonus:		${NAME_S_B}
-
-client:		${NAME_CL}
+			${CC} ${FLAGS} -I${HEADERS} -o ${NAME_C_B} ${OBJS_CLI_B} ${LIBFT_DIR}${LIBFT}
 
 clean_lib:	
 			make clean -C ${LIBFT_DIR}
@@ -73,7 +69,7 @@ clean:		clean_lib
 			rm -f ${OBJS_SERV} ${OBJS_CLIENT} ${OBJS_SER_B} ${OBJS_CLI_B}
 
 fclean:		clean fclean_lib
-			rm -f ${NAME_SE} ${NAME_CL} ${NAME_S_B} ${NAME_CL_B}
+			rm -f ${NAME_SE} ${NAME_CL} ${NAME_S_B} ${NAME_C_B}
 
 re:			fclean all
 

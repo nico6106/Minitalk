@@ -6,16 +6,24 @@
 /*   By: nlesage <nlesage@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 14:29:08 by nlesage           #+#    #+#             */
-/*   Updated: 2022/12/26 10:33:52 by nlesage          ###   ########.fr       */
+/*   Updated: 2022/12/27 12:10:23 by nlesage          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "client.h"
+#include "Includes/client.h"
+
+int	g_status;
 
 int	main(int argc, char **argv)
 {
-	int	pid;
+	int					pid;
+	struct sigaction	sa;
 
+	sa.sa_handler = ft_handle_signal;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+	if (sigaction(SIGUSR1, &sa, NULL) == -1)
+		exit(1);
 	pid = 0;
 	if (argc != 3)
 	{
@@ -27,6 +35,7 @@ int	main(int argc, char **argv)
 		ft_putstr_fd("Error with the PID entered\n", 2);
 		return (1);
 	}
+	g_status = 0;
 	ft_send_message(argv[2], pid);
 	return (0);
 }
@@ -56,22 +65,17 @@ int	ft_send_message(char *str, int pid)
 void	ft_handle_signal(int n)
 {
 	(void) n;
+	g_status = 1;
 }
 
 int	ft_send_char(char c, int pid)
 {
 	int					i;
 	unsigned char		tmp;
-	struct sigaction	sa;
 	int					retour;
 
 	i = 1;
 	retour = 0;
-	sa.sa_handler = ft_handle_signal;
-	sa.sa_flags = 0;
-	sigemptyset(&sa.sa_mask);
-	if (sigaction(SIGUSR1, &sa, NULL) == -1)
-		exit(1);
 	while (i <= 8)
 	{
 		tmp = (c << (8 - i) & 128) >> (7);
@@ -81,7 +85,9 @@ int	ft_send_char(char c, int pid)
 			retour = kill(pid, SIGUSR2);
 		if (retour == -1)
 			ft_quit_wrong_pid();
-		sleep(1);
+		while (g_status == 0)
+			;
+		g_status = 0;
 		i++;
 	}
 	return (0);

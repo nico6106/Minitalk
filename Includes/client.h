@@ -6,7 +6,7 @@
 /*   By: nlesage <nlesage@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 12:26:55 by nlesage           #+#    #+#             */
-/*   Updated: 2022/12/26 15:51:15 by nlesage          ###   ########.fr       */
+/*   Updated: 2022/12/27 12:02:56 by nlesage          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,6 @@ void	ft_handle_signal(int n);
 
 //client_other.c
 void	ft_quit_wrong_pid(void);
+void	ft_quit_message(char *str);
 
 #endif
